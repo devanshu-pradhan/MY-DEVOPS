@@ -5,122 +5,110 @@
 </head>
 <body>
 
-  <h1>📅Networking Basics Part 3 🚀</h1>
+  <h1>📅 Networking Basics – Part 3</h1>
+  <p><strong>Topic:</strong> <em>Routing, Subnetting, NAT, DNS – Deeper Networking Concepts</em></p>
 
-  <h2>☁️ Cloud Networking Concepts</h2>
-
-  <h3>1️⃣ VPC (Virtual Private Cloud)</h3>
-  <p>A logically isolated section of the cloud where you can launch resources in a virtual network.</p>
+  <h2>🧭 1. Routing Fundamentals</h2>
+  <p>Routing is the process of selecting paths in a network along which to send data packets.</p>
   <ul>
-    <li><strong>Subnets:</strong> Divide VPC into public/private zones</li>
-    <li><strong>Route Tables:</strong> Define how traffic flows between subnets and the internet</li>
-    <li><strong>Internet Gateway:</strong> Allows public internet access</li>
-    <li><strong>NAT Gateway:</strong> Allows private subnet instances to access the internet</li>
+    <li><strong>Static Routing:</strong> Manually defined route entries.</li>
+    <li><strong>Dynamic Routing:</strong> Uses protocols like OSPF, RIP, or BGP to learn and update routes automatically.</li>
+    <li><strong>Default Route:</strong> A route used when no other matches exist (e.g., 0.0.0.0/0).</li>
+  </ul>
+  <pre><code># View routing table in Linux
+ip route show
+
+# Add static route
+sudo ip route add 192.168.2.0/24 via 192.168.1.1</code></pre>
+
+  <h2>🔢 2. IP Addressing and Subnetting</h2>
+  <p>Subnetting divides a larger network into smaller, manageable sub-networks.</p>
+  <ul>
+    <li><strong>IP Address:</strong> E.g., 192.168.10.25/24</li>
+    <li><strong>Subnet Mask:</strong> Defines the network and host portion (e.g., 255.255.255.0)</li>
+    <li><strong>CIDR Notation:</strong> Classless Inter-Domain Routing, e.g., /24</li>
+  </ul>
+  <p><strong>Subnet Calculation:</strong></p>
+  <pre><code>Network: 192.168.10.0/24
+Range:   192.168.10.1 – 192.168.10.254
+Broadcast: 192.168.10.255
+Total Hosts: 254</code></pre>
+
+  <h2>🌐 3. NAT (Network Address Translation)</h2>
+  <p>Translates private IP addresses to public IPs. Useful in LAN-to-Internet scenarios.</p>
+  <ul>
+    <li><strong>SNAT (Source NAT):</strong> Used for outbound connections (internal → internet).</li>
+    <li><strong>DNAT (Destination NAT):</strong> Used for port forwarding (internet → internal).</li>
+  </ul>
+  <pre><code># Example using iptables for SNAT
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE</code></pre>
+
+  <h2>📡 4. DNS Deep Dive</h2>
+  <p>The Domain Name System (DNS) translates human-readable domain names to IP addresses.</p>
+  <ul>
+    <li><strong>A Record:</strong> Maps domain to IPv4</li>
+    <li><strong>AAAA Record:</strong> Maps domain to IPv6</li>
+    <li><strong>CNAME:</strong> Alias to another domain</li>
+    <li><strong>MX:</strong> Mail server records</li>
+  </ul>
+  <pre><code># Query DNS records
+dig example.com
+dig +short A google.com
+host example.com
+nslookup example.com</code></pre>
+
+  <h2>🌍 5. Public vs Private IPs</h2>
+  <p>Private IPs are used inside networks; public IPs are routable on the internet.</p>
+  <ul>
+    <li>Private ranges:
+      <ul>
+        <li>10.0.0.0 – 10.255.255.255</li>
+        <li>172.16.0.0 – 172.31.255.255</li>
+        <li>192.168.0.0 – 192.168.255.255</li>
+      </ul>
+    </li>
+    <li>Public IPs are allocated by ISPs and are unique globally.</li>
   </ul>
 
-  <h3>2️⃣ Network Security Groups (NSGs)</h3>
-  <p>Firewall rules in cloud platforms (like Azure/AWS) that control inbound and outbound traffic to network interfaces, VMs, or subnets.</p>
-  <pre><code># Example NSG rule:
-Allow Inbound
-Protocol: TCP
-Port: 22
-Source: My IP
-</code></pre>
-
-  <h3>3️⃣ Peering and VPN</h3>
+  <h2>📂 6. Useful Network Config Files (Linux)</h2>
   <ul>
-    <li><strong>VPC Peering:</strong> Connect two VPCs for private communication</li>
-    <li><strong>VPN Gateway:</strong> Connect on-premise network to cloud securely</li>
-    <li><strong>ExpressRoute (Azure):</strong> Dedicated high-speed connection</li>
+    <li><code>/etc/hosts</code> – Manual DNS resolution</li>
+    <li><code>/etc/resolv.conf</code> – DNS server config</li>
+    <li><code>/etc/network/interfaces</code> – Interface settings (Debian)</li>
+    <li><code>/etc/netplan/*.yaml</code> – Netplan configs (Ubuntu)</li>
   </ul>
 
-  <h2>☸️ Kubernetes Networking</h2>
-
-  <h3>4️⃣ Pod Networking</h3>
-  <p>Each pod gets its own IP. CNI (Container Network Interface) plugins manage network configuration.</p>
+  <h2>🔎 7. Common Troubleshooting Tools</h2>
   <ul>
-    <li><strong>Common CNI plugins:</strong> Flannel, Calico, Cilium</li>
-    <li><strong>Flat network:</strong> Pods can communicate across nodes without NAT</li>
+    <li><code>ping</code> – Test network reachability</li>
+    <li><code>traceroute</code> – Display route to host</li>
+    <li><code>ip a</code> – Show network interfaces and IPs</li>
+    <li><code>netstat / ss</code> – View socket connections</li>
+    <li><code>tcpdump</code> – Packet sniffer</li>
   </ul>
 
-  <h3>5️⃣ Services in Kubernetes</h3>
+  <h2>💡 Light DevOps Relevance</h2>
+  <p>DevOps professionals benefit from understanding:</p>
   <ul>
-    <li><strong>ClusterIP:</strong> Default. Internal communication within the cluster</li>
-    <li><strong>NodePort:</strong> Exposes service on static port on each node</li>
-    <li><strong>LoadBalancer:</strong> Provisioned by cloud provider for external traffic</li>
+    <li>Routing and DNS for service exposure</li>
+    <li>NAT and firewall rules for infrastructure security</li>
+    <li>Subnetting for VPC/VNet planning in the cloud</li>
   </ul>
 
-  <h3>6️⃣ Ingress & Ingress Controllers</h3>
-  <p>Provides routing rules and SSL termination for HTTP/S traffic into Kubernetes.</p>
-  <pre><code>apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: app-ingress
-spec:
-  rules:
-  - host: myapp.example.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: my-service
-            port:
-              number: 80
-</code></pre>
-
-  <h3>7️⃣ Network Policies</h3>
-  <p>Controls communication between pods. Like firewalls for Kubernetes pods.</p>
-  <pre><code>kind: NetworkPolicy
-apiVersion: networking.k8s.io/v1
-metadata:
-  name: deny-all
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-</code></pre>
-
-  <h2>🔄 GitOps and CI/CD Networking</h2>
-
-  <h3>8️⃣ Webhooks and Git Connectivity</h3>
-  <p>Ensure your CI/CD tools (e.g., GitHub Actions, Jenkins) can securely access:
-    <ul>
-      <li>Source code via HTTPS or SSH</li>
-      <li>Webhooks from GitHub/GitLab for triggering builds</li>
-    </ul>
-  </p>
-
-  <h3>9️⃣ Firewall Rules for CI/CD Agents</h3>
-  <p>Open only required ports:
-    <ul>
-      <li>22 for SSH</li>
-      <li>443 for API/webhook access</li>
-    </ul>
-  </p>
-
-  <h3>🔐 10. Zero Trust Networking</h3>
+  <h2>📘 Summary</h2>
   <ul>
-    <li>Never trust, always verify</li>
-    <li>Use identity-aware proxies and authentication layers</li>
-    <li>Control access by user identity, not just IP</li>
+    <li>Routing helps traffic move efficiently across networks.</li>
+    <li>Subnetting allows efficient IP allocation.</li>
+    <li>NAT bridges internal networks to the internet.</li>
+    <li>DNS is essential for user-friendly network access.</li>
   </ul>
 
-  <h2>🧠 Summary</h2>
+  <h2>📍 What’s Next? (Part 4 Preview)</h2>
   <ul>
-    <li>Cloud networking relies on isolation, routing, and security via VPCs and subnets</li>
-    <li>Kubernetes networking enables dynamic service discovery, ingress control, and policy enforcement</li>
-    <li>CI/CD pipelines require secure access to Git systems and proper firewall configurations</li>
-  </ul>
-
-  <h2>📍 What’s Next?</h2>
-  <ul>
-    <li>🔐 Dive into Service Mesh (Istio/Linkerd)</li>
-    <li>🌐 DNS & TLS automation with Cert-Manager in Kubernetes</li>
-    <li>📈 Monitor traffic with Prometheus + Grafana</li>
-    <li>🧪 Simulate attacks with tools like Chaos Mesh</li>
+    <li>Advanced TCP/IP stack behavior</li>
+    <li>Firewall concepts (iptables, nftables)</li>
+    <li>DHCP, ARP, and ICMP protocols</li>
+    <li>IPv6 – the future of addressing</li>
   </ul>
 
 </body>
